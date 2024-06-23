@@ -7,7 +7,9 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo "Hello World!!!"
+                echo "Building the Eurika Application"
+                //mvn command
+                sh 'mvn clean package -DskipTests=true'
             }
         }
     }
