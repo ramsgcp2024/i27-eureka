@@ -14,6 +14,7 @@ pipeline {
                 echo "Building the Eurika Application"
                 //mvn command
                 sh 'mvn clean package -DskipTests=true'
+                archiveArtifacts artifacts: 'target/*.jar'
             }
         }
     }
