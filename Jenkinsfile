@@ -20,6 +20,7 @@ pipeline {
                 archiveArtifacts artifacts: 'target/*.jar'
             }
         }
+       /*
         stage ('Unit Tests') {
             steps {
                 echo "Executing unit test for ${env.APPLICATION_NAME} Application"
@@ -30,6 +31,19 @@ pipeline {
                     junit 'target/surefire-reports/*.xml'
                     jacoco execPattern: 'target/jacoco.xml'
                 }
+            }
+        }
+        */
+
+        stage ('Sonar') {
+            steps {
+                sh """
+                echo "Starting sonar scan"
+                mvn clean verify sonar:sonar \
+                    -Dsonar.projectKey=i27-eureka \
+                    -Dsonar.host.url=http://34.125.60.190:9000 \
+                    -Dsonar.login=sqa_12fa083602b267056fdb6c977861d1060d1d47bf
+                """
             }
         }
 
