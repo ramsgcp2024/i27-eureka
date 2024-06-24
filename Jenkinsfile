@@ -25,7 +25,14 @@ pipeline {
                 echo "Executing unit test for ${env.APPLICATION_NAME} Application"
                 sh 'mvn test'
             }
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml'
+                    jacoco execPattern: 'target/jacoco.xml'
+                }
+            }
         }
+
             
         
     }
