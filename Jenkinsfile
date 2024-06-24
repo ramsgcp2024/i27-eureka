@@ -19,6 +19,7 @@ pipeline {
                 sh 'mvn clean package -DskipTests=true'
                 archiveArtifacts artifacts: 'target/*.jar'
             }
+        }
         stage ('Unit Tests') {
             steps {
                 echo "Executing unit test for ${env.APPLICATION_NAME} Application"
@@ -26,6 +27,6 @@ pipeline {
             }
         }
             
-        }
+        
     }
 }
