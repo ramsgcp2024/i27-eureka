@@ -9,6 +9,8 @@ pipeline {
     }
     environment {
         APPLICATION_NAME = "Eureka"
+       // POM_VERSION = readMavenPom().getVersion()
+       // POM_PACKAGING = readMavenPom().getPackaging()
         SONAR_URL = "http://34.125.173.244:9000/"
         SONAR_TOKEN = credentials('sonar_creds')
     }
@@ -21,18 +23,34 @@ pipeline {
                 archiveArtifacts artifacts: 'target/*.jar'
             }
         }
-        stage('Unit Tests') {
+       /*
+        stage ('Unit Tests') {
             steps {
-                echo "Executing unit tests for ${env.APPLICATION_NAME} Application"
+                echo "Executing unit test for ${env.APPLICATION_NAME} Application"
+                sh 'mvn test'
+            }
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml'
+                    jacoco execPattern: 'target/jacoco.xml'
+                }
+            }
+        }
+        */
+
+        stage ('Sonar') {
+            steps {
                 sh """
                 echo "Starting sonar scan"
-                    mvn clean verify sonar:sonar \
+                mvn clean sonar:sonar \
                     -Dsonar.projectKey=i27-eureka \
-                    -Dsonar.host.url=http://34.125.173.244:9000 \
-                    -Dsonar.login=sqp_73bcff7ba2aa147489e314ac5796e013d5cfbcef
+                    -Dsonar.host.url= ${env.SONAR_URL} \
+                    -Dsonar.login=${SONAR_TOKEN}
                 """
             }
         }
+
+            
         
     }
 }
