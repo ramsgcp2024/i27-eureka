@@ -28,8 +28,8 @@ pipeline {
                 echo "Starting sonar scan"
                 mvn clean sonar:sonar \
                     -Dsonar.projectKey=i27-eureka \
-                    -Dsonar.host.url= ${env.SONAR_URL} \
-                    -Dsonar.login=${SONAR_TOKEN}
+                    -Dsonar.host.url= http://34.125.173.244:9000/ \
+                    -Dsonar.login=sqa_12fa083602b267056fdb6c977861d1060d1d47bf
                 """
             }
         }
