@@ -23,16 +23,24 @@ pipeline {
                 archiveArtifacts artifacts: 'target/*.jar'
             }
         }
-        stage('Unit Tests') {
+        stage('Sonar') {
             steps {
-                sh """
-                echo "Starting sonar scan"
-                echo "Executing unit tests for ${env.APPLICATION_NAME} Application"
-                     mvn sonar:sonar \
-                    -Dsonar.projectKey=i27-eureka \
-                    -Dsonar.host.url=${env.SONAR_URL} \
-                    -Dsonar.login=${SONAR_TOKEN}
-                     """
+                echo "Starting sonar scans with Quality Gates"
+                //before we go to next step we need to install SonarQube plugin
+                // next goto manage Jenkins > System > Add sonarqube > give URL and token for SonarQube 
+                withSonarQubeEnv('SonarQube') { //we given 'SonarQube' name at the time of Add sonarqube
+                    sh """
+                        mvn sonar:sonar \
+                        -Dsonar.projectKey=i27-eureka \
+                        -Dsonar.host.url=${env.SONAR_URL} \
+                        -Dsonar.login=${SONAR_TOKEN}
+                        """
+                }   
+                timeout (time: 2, unit: 'MINUTES') { //SECONDS, MINUTES, HOURS, DAYS
+                        script {
+                            waitForQualityGate abortPipeline: true
+                        }
+                }
             }
         }
         stage('Docker Format') {
