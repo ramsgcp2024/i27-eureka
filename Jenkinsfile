@@ -57,7 +57,7 @@ pipeline {
                 echo "The Current format is: i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING}" 
 
                     //expected : eureka-buildnumber-branchname.jar
-                echo "Expected format is: ${env.APPLICATION_NAME}-${currentBuild.number}-${BRANCH_NAME}.${env.POM_PACKAGING}"
+             //   echo "Expected format is: ${env.APPLICATION_NAME}-${currentBuild.number}-${BRANCH_NAME}.${env.POM_PACKAGING}"
             }
         }
 
