@@ -26,7 +26,7 @@ pipeline {
                 sh """
                 echo "Starting sonar scan"
                 echo "Executing unit tests for ${env.APPLICATION_NAME} Application"
-                     mvn clean verify sonar:sonar \
+                     mvn sonar:sonar \
                     -Dsonar.projectKey=i27-eureka \
                     -Dsonar.host.url=http://34.125.173.244:9000 \
                     -Dsonar.login=sqa_27938702c7e2f326ed3f0f6b7d492b1ff8642791
