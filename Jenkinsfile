@@ -54,7 +54,7 @@ pipeline {
             steps {
                 //i27-eureka-0.0.1-SNAPSHOT.jar
                 //install pipeline utility before executing this.  It will ask for approval then approve as a admin member
-                echo "The Current format is: i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING}" 
+            //    echo "The Current format is: i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING}" 
 
                     //expected : eureka-buildnumber-branchname.jar
              //   echo "Expected format is: ${env.APPLICATION_NAME}-${currentBuild.number}-${BRANCH_NAME}.${env.POM_PACKAGING}"
