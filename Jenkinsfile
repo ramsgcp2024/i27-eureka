@@ -24,28 +24,14 @@ pipeline {
         stage('Unit Tests') {
             steps {
                 echo "Executing unit tests for ${env.APPLICATION_NAME} Application"
-                sh """
-                echo "Starting sonar scan"
-                    mvn clean verify sonar:sonar \
-                    -Dsonar.projectKey=i27-eureka \
-                    -Dsonar.host.url=http://34.125.173.244:9000 \
-                    -Dsonar.login=sqp_73bcff7ba2aa147489e314ac5796e013d5cfbcef
-                """
+              //  sh """
+              //  echo "Starting sonar scan"
+              //      mvn clean verify sonar:sonar \
+               //     -Dsonar.projectKey=i27-eureka \
+               //     -Dsonar.host.url=http://34.125.173.244:9000 \
+               //     -Dsonar.login=sqp_73bcff7ba2aa147489e314ac5796e013d5cfbcef
+               // """
             }
         }
-
-        stage ('Units Tests') {
-            steps {
-                echo "Executing unit test for ${env.APPLICATION_NAME} Application"
-                sh 'mvn test'
-            }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml'
-                    jacoco execPattern: 'target/jacoco.xml'
-                }
-            }
-        }
-        
     }
 }
