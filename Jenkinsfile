@@ -1,5 +1,4 @@
 // This Jenkinsfile is for Eureka microservice
-
 pipeline {
     agent {
         label 'k8s-slave'
@@ -50,7 +49,8 @@ pipeline {
                 """
             }
         }
-        stage('Docker Format') {
+ /*
+        stage('Docker_Format') {
             steps {
                 echo "test"
                 //i27-eureka-0.0.1-SNAPSHOT.jar
@@ -61,7 +61,7 @@ pipeline {
              //   echo "Expected format is: ${env.APPLICATION_NAME}-${currentBuild.number}-${BRANCH_NAME}.${env.POM_PACKAGING}"
             }
         }
-
+*/
             
         
     }
