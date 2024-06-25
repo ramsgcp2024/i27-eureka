@@ -24,13 +24,13 @@ pipeline {
         stage('Unit Tests') {
             steps {
                 echo "Executing unit tests for ${env.APPLICATION_NAME} Application"
-              //  sh """
-              //  echo "Starting sonar scan"
-              //      mvn clean verify sonar:sonar \
-               //     -Dsonar.projectKey=i27-eureka \
-               //     -Dsonar.host.url=http://34.125.173.244:9000 \
-               //     -Dsonar.login=sqp_73bcff7ba2aa147489e314ac5796e013d5cfbcef
-               // """
+                sh """
+                echo "Starting sonar scan"
+                    mvn clean verify sonar:sonar \
+                    -Dsonar.projectKey=i27-eureka \
+                    -Dsonar.host.url=http://34.125.173.244:9000 \
+                    -Dsonar.login=sqa_27938702c7e2f326ed3f0f6b7d492b1ff8642791
+                     """
             }
         }
     }
