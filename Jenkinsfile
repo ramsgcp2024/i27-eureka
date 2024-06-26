@@ -53,6 +53,7 @@ pipeline {
                     ls -la ./.cicd/
                     echo "********************** Building DOCKER Image ***********************"
                     cp ${WORKSPACE}/target/*.jar ./.cicd/
+                    ls -la
                     docker images
                     """
                 }
