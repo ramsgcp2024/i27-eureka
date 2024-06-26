@@ -49,11 +49,11 @@ pipeline {
                     sh """
                     ls -la
                     pwd
-                    echo "Listing files in .cicd folder"
-                    echo "********************** Building DOCKER Image ***********************"
                     cp ${WORKSPACE}/target/i27-${env.APPLICATION_NAME}-${POM_VERSION}.${POM_PACKAGING} ./.cicd/
+                    echo "Listing files in .cicd folder"
                     ls -la ./.cicd/
-                    docker build --build-args JAR_SOURCE = i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} -t ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT} ./.cicd
+                    echo "********************** Building DOCKER Image ***********************"
+                    docker build --build-arg JAR_SOURCE= i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} -t ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT} ./.cicd
                     docker images
                     """
                 }
