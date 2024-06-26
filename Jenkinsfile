@@ -52,6 +52,7 @@ pipeline {
                     echo "Listing files in .cicd folder"
                     ls -la ./.cicd/
                     echo "********************** Building DOCKER Image ***********************"
+                    cp ${WORKSPACE}/target/*.jar ./.cicd/
                     docker images
                     """
                 }
