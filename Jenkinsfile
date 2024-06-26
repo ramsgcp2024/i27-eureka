@@ -43,6 +43,7 @@ pipeline {
                 }
             }
         }
+       /*
         stage('Docker Format') {
             steps {
                 //i27-Eureka-0.0.1-SNAPSHOT.jar
@@ -51,6 +52,12 @@ pipeline {
                 echo "Expected format is: i27-${env.APPLICATION_NAME}-${currentBuild.number}-${BRANCH_NAME}.${env.POM_PACKAGING}" 
             }
 
+        }
+        */
+        stage('Docker Build') {
+            steps {
+                echo "*********** Docker build is going on ************"
+            }
         }
     }
 }
