@@ -71,11 +71,5 @@ pipeline {
 
         }
         */
-        stage('Docker Build') {
-            steps {
-                echo "*********** Docker build is going on ************"
-            }
-        }
     }
-}
 
