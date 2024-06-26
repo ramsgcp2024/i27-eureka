@@ -13,7 +13,8 @@ pipeline {
         SONAR_TOKEN = credentials('sonar_creds')
         POM_VERSION = readMavenPom().getVersion()
         POM_PACKAGING = readMavenPom().getPackaging()
-        DOCKER_HUB = "docker.io/i27k8s10"
+        DOCKER_HUB = "docker.io/ramsgcp2024"
+        DOCKER_CREDS = credentials('docker_creds')
     }
     stages {
         stage('Build') {
@@ -56,6 +57,8 @@ pipeline {
                     docker build --force-rm --no-cache --build-arg JAR_SOURCE=i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} -t ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT} .cicd/.
                     # docker build -t abc .
                     docker images
+                    echo "********************** DOCKER Login ***********************"
+                    docker login -u ${DOCKER_CREDS_USR} -p ${DOCKER_CREDS_PSW}
                     """
                 }
             }
