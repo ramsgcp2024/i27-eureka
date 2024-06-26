@@ -49,7 +49,6 @@ pipeline {
                     sh """
                     ls -la
                     pwd
-                    cp ${WORKSPACE}/target/i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} ./.cicd/
                     echo "Listing files in .cicd folder"
                     ls -la ./.cicd/
                     echo "********************** Building DOCKER Image ***********************"
@@ -58,6 +57,8 @@ pipeline {
                 }
             }
         }
+//                     cp ${WORKSPACE}/target/i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} ./.cicd/
+
 // docker build --build-args JAR_SOURCE = i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} -t ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT} ./.cicd
        /*
         stage('Docker Format') {
