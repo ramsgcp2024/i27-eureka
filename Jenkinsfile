@@ -51,7 +51,7 @@ pipeline {
                     pwd
                     echo "Listing files in .cicd folder"
                     echo "********************** Building DOCKER Image ***********************"
-                    cp ${WORKSPACE}/target/i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} ./.cicd/
+                    cp ${WORKSPACE}/target/i27-${env.APPLICATION_NAME}-${POM_VERSION}.${POM_PACKAGING} ./.cicd/
                     ls -la ./.cicd/
                     """
                 }
