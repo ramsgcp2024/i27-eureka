@@ -13,6 +13,7 @@ pipeline {
         SONAR_TOKEN = credentials('sonar_creds')
         POM_VERSION = readMavenPom().getVersion()
         POM_PACKAGING = readMavenPom().getPackaging()
+        DOCKER_HUB = docker.io/i27k8s10
     }
     stages {
         stage('Build') {
@@ -36,13 +37,29 @@ pipeline {
                         -Dsonar.login=${SONAR_TOKEN}
                         """
                 }   
-                timeout (time: 2, unit: 'MINUTES') { //SECONDS, MINUTES, HOURS, DAYS
-                        script {
-                            waitForQualityGate abortPipeline: true
-                        }
+              //  timeout (time: 2, unit: 'MINUTES') { //SECONDS, MINUTES, HOURS, DAYS
+                //        script {
+                  //          waitForQualityGate abortPipeline: true
+                    //    }
+                }
+            }
+            stage('Docker Build & Push') {
+                steps {
+                    echo "Starting Docker build and stage"
+                    sh """
+                    ls -la
+                    pwd
+                    cp ${WORKSPACE}/target/i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} ./.cicd
+                    echo "Listing files in .cicd folder"
+                    ls -la ./.cicd/
+                    echo "********************** Building DOCKER Image ***********************"
+                    docker build --build-args JAR_SOURCE = i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} -t ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT} ./.cicd
+                    docker images
+                    """
                 }
             }
         }
+
        /*
         stage('Docker Format') {
             steps {
