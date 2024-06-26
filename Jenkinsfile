@@ -13,7 +13,7 @@ pipeline {
         SONAR_TOKEN = credentials('sonar_creds')
         POM_VERSION = readMavenPom().getVersion()
         POM_PACKAGING = readMavenPom().getPackaging()
-      //  DOCKER_HUB = docker.io/i27k8s10
+        DOCKER_HUB = "docker.io/i27k8s10"
     }
     stages {
         stage('Build') {
@@ -49,7 +49,7 @@ pipeline {
                     sh """
                     ls -la
                     pwd
-                    cp ${WORKSPACE}/target/i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING}/target ./.cicd/
+                    cp ${WORKSPACE}/target/i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} ./.cicd/
                     echo "Listing files in .cicd folder"
                     ls -la ./.cicd/
                     echo "********************** Building DOCKER Image ***********************"
