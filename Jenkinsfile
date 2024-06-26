@@ -8,7 +8,7 @@ pipeline {
         jdk 'JDK-17'
     }
     environment {
-        APPLICATION_NAME = "Eureka"
+        APPLICATION_NAME = "eureka"
         SONAR_URL = "http://34.125.122.109:9000/"
         SONAR_TOKEN = credentials('sonar_creds')
         POM_VERSION = readMavenPom().getVersion()
