@@ -7,6 +7,36 @@ pipeline {
         maven 'Maven-3.8.8'
         jdk 'JDK-17'
     }
+    parameters {
+        choice (name: 'buildOnly',
+                choices: 'no\nyes',
+                description: "Build the Application Only !!!"
+                )
+        choice (name: 'scanOnly',
+                choices: 'no\nyes',
+                description: "Scan the Artifact only"
+                )
+        choice (name: 'dockerPush',
+                choices: 'no\nyes',
+                description: "Push Image to Docker registry"
+                )
+        choice (name: 'deployToDev',
+                choices: 'no\nyes',
+                description: "This will deploy into Dev Environment"
+                )
+        choice (name: 'deployToTest',
+                choices: 'no\nyes',
+                description: "This will deploy to test environment"
+                )
+        choice (name: 'deployToPreprod',
+                choices: 'no\nyes',
+                description: "This will deploy to Preprod Environment"
+                )
+        choice (name: 'deployToProd',
+                choices: 'no\nyes',
+                descriptoin: "This will deploy to Prod Environment"
+                )
+    }
     environment {
         APPLICATION_NAME = "eureka"
         SONAR_URL = "http://34.125.122.109:9000/"
@@ -19,6 +49,13 @@ pipeline {
     }
     stages {
         stage('Build') {
+            when {
+                anyOf {
+                    expression {
+                        params.buildOnly == 'yes'
+                    }
+                }
+            }
             steps {
                 echo "Building the ${env.APPLICATION_NAME} Application"
                 //mvn command
@@ -27,6 +64,13 @@ pipeline {
             }
         }
         stage('Sonar') {
+            when {
+                anyOf {
+                    expression {
+                        params.scanOnly == 'yes'
+                    }
+                }
+            }
             steps {
                 echo "Starting sonar scans with Quality Gates"
                 //before we go to next step we need to install SonarQube plugin
@@ -46,6 +90,13 @@ pipeline {
                 }
             }
             stage('Docker Build & Push') {
+                when {
+                    anyOf {
+                        expression {
+                            params.dockerPush == 'yes'
+                        }
+                    }
+                }
                 steps {
                     echo "Starting Docker build and stage"
                     sh """
@@ -67,6 +118,13 @@ pipeline {
             }
 
             stage('Deploy to Dev') {
+                when {
+                    anyOf {
+                        expression {
+                            params.deployToDev == 'yes'
+                        }
+                    }
+                }
                 steps {
                     script {
                         dockerDeploy('Dev','5561','8761').call()
@@ -75,6 +133,13 @@ pipeline {
                 }
             }
             stage('Deploy to Test') {
+                when {
+                    anyOf {
+                        expression {
+                            params.deployToTest == 'yes'
+                        }
+                    }
+                }
                 steps {
                     script {
                         dockerDeploy('Test','6561','8761').call()
@@ -83,6 +148,13 @@ pipeline {
                 }
             }
             stage('Deploy to Preprod') {
+                when {
+                    anyOf {
+                        expression {
+                            params.deployToPreprod == 'yes'
+                        }
+                    }
+                }
                 steps {
                     script {
                         dockerDeploy('Preprod','7561','8761').call()
@@ -91,6 +163,13 @@ pipeline {
                 }
             }
             stage('Deploy to Prod') {
+                when {
+                    anyOf {
+                        expression {
+                            params.deployToProd == 'yes'
+                        }
+                    }
+                }
                 steps {
                     script {
                         dockerDeploy('Prod','8561','8761').call()
