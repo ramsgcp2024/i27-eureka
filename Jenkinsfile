@@ -15,6 +15,7 @@ pipeline {
         POM_PACKAGING = readMavenPom().getPackaging()
         DOCKER_HUB = "docker.io/ramsgcp2024"
         DOCKER_CREDS = credentials('docker_creds')
+        //DOCKER_HOST_IP = 0.0.0.0
     }
     stages {
         stage('Build') {
@@ -61,7 +62,17 @@ pipeline {
                     docker login -u ${DOCKER_CREDS_USR} -p ${DOCKER_CREDS_PSW}
                     echo "********************** DOCKER Push ***********************"
                     docker push ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}
-                    """
+                                        """
+                }
+            }
+
+            stage('Deploy to Dev') {
+                steps {
+                    echo "********************** Deploy to DEV Environment ***********************"
+                    withCredentials([usernamePassword(credentialsId: 'rama_docker_vm_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+                        // some block
+                        sshpass -p {PASSWORD} ssh -o StrictHostKeyChecking=no ${rama}@${docker_server_ip} hostname -i
+                    }
                 }
             }
 
