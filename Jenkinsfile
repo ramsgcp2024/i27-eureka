@@ -34,7 +34,7 @@ pipeline {
                 )
         choice (name: 'deployToProd',
                 choices: 'no\nyes',
-                descriptoin: "This will deploy to Prod Environment"
+                description: "This will deploy to Prod Environment"
                 )
     }
     environment {
