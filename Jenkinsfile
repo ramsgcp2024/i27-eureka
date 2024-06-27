@@ -72,7 +72,8 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'rama_docker_vm_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) 
                     {
                         // some block
-                        sh "sshpass -p ${PASSWORD} ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} hostname -i"
+                        //sh "sshpass -p ${PASSWORD} ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} hostname -i"
+                        sh "sshpass -p ${PASSWORD} ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker run -p -d 5761:8761 --name ${env.APPLICATION_NAME}-dev ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"   
                     }
                 }
             }
