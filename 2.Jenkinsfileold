@@ -68,33 +68,27 @@ pipeline {
 
             stage('Deploy to Dev') {
                 steps {
+                    echo "********************** Deploy to DEV Environment ***********************"
+                    withCredentials([usernamePassword(credentialsId: 'rama_docker_vm_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) 
+                    {
                     script {
-                        dockerDeploy('Dev','5561','8761').call()
-                        echo "Deployed to Dev Environment Successfully !!!!!"
+                        //Pull the image on the DOCKER Server
+                        sh "sshpass -p ${PASSWORD} ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker pull ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
+                    try {
+                        //stop
+                        sh "sshpass -p ${PASSWORD} ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker stop ${env.APPLICATION_NAME}-dev"
+                        //remove
+                        sh "sshpass -p ${PASSWORD} ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker rm ${env.APPLICATION_NAME}-dev"
+                    }catch(err) {
+                         echo "Error caught: $err"   
                     }
-                }
-            }
-            stage('Deploy to Test') {
-                steps {
-                    script {
-                        dockerDeploy('Test','6561','8761').call()
-                        echo "Deployed to Test Environment Successfully !!!!!"
+                        // create the container
+                        echo "Creating the container"
+                        sh "sshpass -p ${PASSWORD} ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker run -d -p 5761:8761 --name ${env.APPLICATION_NAME}-dev ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
                     }
-                }
-            }
-            stage('Deploy to Preprod') {
-                steps {
-                    script {
-                        dockerDeploy('Preprod','7561','8761').call()
-                        echo "Deployed to Preprod Environment Successfully !!!!!"
-                    }
-                }
-            }
-            stage('Deploy to Prod') {
-                steps {
-                    script {
-                        dockerDeploy('Prod','8561','8761').call()
-                        echo "Deployed to Prod Environment Successfully !!!!!"
+                        // some block
+                        //sh "sshpass -p ${PASSWORD} ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} hostname -i"
+                         
                     }
                 }
             }
@@ -102,7 +96,6 @@ pipeline {
         }
         //   
 //                     cp ${WORKSPACE}/target/i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} ./.cicd/
-
 
 // docker build --build-args JAR_SOURCE = i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} -t ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT} ./.cicd
        /*
@@ -118,31 +111,3 @@ pipeline {
         */
     }
 
-
-def dockerDeploy(envDeploy, hostPort, containerPort) {
-    //Application Name, Containar Port, Host Port, container name, environment
-    return {
-        echo "********************** Deploy to $envDeploy Environment ***********************"
-        withCredentials([usernamePassword(credentialsId: 'rama_docker_vm_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) 
-        {
-        script {
-            //Pull the image on the DOCKER Server
-            sh "sshpass -p ${PASSWORD} ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker pull ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
-        try {
-            //stop
-            sh "sshpass -p ${PASSWORD} ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker stop ${env.APPLICATION_NAME}-$envDeploy"
-            //remove
-            sh "sshpass -p ${PASSWORD} ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker rm ${env.APPLICATION_NAME}-$envDeploy"
-        }catch(err) {
-            echo "Error caught: $err"   
-        }
-            // create the container
-            echo "Creating the container"
-            sh "sshpass -p ${PASSWORD} ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} docker run -d -p $hostPort:$containerPort --name ${env.APPLICATION_NAME}-$envDeploy ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
-        }
-            // some block
-            //sh "sshpass -p ${PASSWORD} ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} hostname -i"
-            
-        }
-    }
-}
