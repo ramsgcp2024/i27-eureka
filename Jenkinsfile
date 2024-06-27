@@ -69,9 +69,10 @@ pipeline {
             stage('Deploy to Dev') {
                 steps {
                     echo "********************** Deploy to DEV Environment ***********************"
-                    withCredentials([usernamePassword(credentialsId: 'rama_docker_vm_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+                    withCredentials([usernamePassword(credentialsId: 'rama_docker_vm_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) 
+                    {
                         // some block
-                        sshpass -p {PASSWORD} ssh -o StrictHostKeyChecking=no ${rama}@${docker_server_ip} hostname -i
+                        sh "sshpass -p ${PASSWORD} ssh -o StrictHostKeyChecking=no ${rama}@${docker_server_ip} hostname -i"
                     }
                 }
             }
