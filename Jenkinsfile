@@ -72,7 +72,7 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'rama_docker_vm_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) 
                     {
                         // some block
-                        sh "sshpass -p ${PASSWORD} ssh -o StrictHostKeyChecking=no ${rama}@${docker_server_ip} hostname -i"
+                        sh "sshpass -p ${PASSWORD} ssh -o StrictHostKeyChecking=no ${USERNAME}@${docker_server_ip} hostname -i"
                     }
                 }
             }
