@@ -57,10 +57,7 @@ pipeline {
                 }
             }
             steps {
-                echo "Building the ${env.APPLICATION_NAME} Application"
-                //mvn command
-                sh 'mvn clean package -DskipTests=true'
-                archiveArtifacts artifacts: 'target/*.jar'
+             buildApp().call()
             }
         }
         stage('Sonar') {
@@ -98,22 +95,7 @@ pipeline {
                     }
                 }
                 steps {
-                    echo "Starting Docker build and stage"
-                    sh """
-                    ls -la
-                    pwd
-                    cp ${WORKSPACE}/target/i27-${env.APPLICATION_NAME}-${POM_VERSION}.${POM_PACKAGING} ./.cicd/
-                    echo "Listing files in .cicd folder"
-                    ls -la ./.cicd/
-                    echo "********************** Building DOCKER Image ***********************"
-                    docker build --force-rm --no-cache --build-arg JAR_SOURCE=i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} -t ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT} .cicd/.
-                    # docker build -t abc .
-                    docker images
-                    echo "********************** DOCKER Login ***********************"
-                    docker login -u ${DOCKER_CREDS_USR} -p ${DOCKER_CREDS_PSW}
-                    echo "********************** DOCKER Push ***********************"
-                    docker push ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}
-                                        """
+                    dockerBuildandPush().call()
                 }
             }
 
@@ -127,6 +109,7 @@ pipeline {
                 }
                 steps {
                     script {
+                        imageValidation().call()
                         dockerDeploy('Dev','5561','8761').call()
                         echo "Deployed to Dev Environment Successfully !!!!!"
                     }
@@ -142,6 +125,7 @@ pipeline {
                 }
                 steps {
                     script {
+                        imageValidation().call()
                         dockerDeploy('Test','6561','8761').call()
                         echo "Deployed to Test Environment Successfully !!!!!"
                     }
@@ -157,6 +141,7 @@ pipeline {
                 }
                 steps {
                     script {
+                        imageValidation().call()
                         dockerDeploy('Preprod','7561','8761').call()
                         echo "Deployed to Preprod Environment Successfully !!!!!"
                     }
@@ -180,6 +165,7 @@ pipeline {
                     input message: "Deploying to ${env.APPLICATION_NAME} to production ???", ok: 'yes', submitter: 'john'
                     }
                     script {
+                        imageValidation().call()
                         dockerDeploy('Prod','8561','8761').call()
                         echo "Deployed to Prod Environment Successfully !!!!!"
                     }
@@ -234,3 +220,47 @@ def dockerDeploy(envDeploy, hostPort, containerPort) {
     }
 }
 
+def imageValidation() {
+    return {
+        println ("Pulling the Docker image")
+        try {
+          sh "docker pull ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
+        }
+        catch (Exception e) {
+            println("OOPS!!!!!, docker image with this tag doesnot exists, So creating the image")
+            buildApp().call()
+            dockerBuildandPush().call()
+        }
+
+    }
+}
+
+def buildApp() {
+    return {
+            echo "Building the ${env.APPLICATION_NAME} Application"
+            //mvn command
+            sh 'mvn clean package -DskipTests=true'
+            archiveArtifacts artifacts: 'target/*.jar'
+    }
+}
+
+def dockerBuildandPush() {
+    return {
+        echo "Starting Docker build and stage"
+            sh """
+            ls -la
+            pwd
+            cp ${WORKSPACE}/target/i27-${env.APPLICATION_NAME}-${POM_VERSION}.${POM_PACKAGING} ./.cicd/
+            echo "Listing files in .cicd folder"
+            ls -la ./.cicd/
+            echo "********************** Building DOCKER Image ***********************"
+            docker build --force-rm --no-cache --build-arg JAR_SOURCE=i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} -t ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT} .cicd/.
+            # docker build -t abc .
+            docker images
+            echo "********************** DOCKER Login ***********************"
+            docker login -u ${DOCKER_CREDS_USR} -p ${DOCKER_CREDS_PSW}
+            echo "********************** DOCKER Push ***********************"
+            docker push ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}
+            """
+    }
+}
