@@ -171,9 +171,7 @@ pipeline {
                         }
                     }
                      anyOf {
-                        expression {
                             branch 'release/*'
-                        }
                     }
                     }
                 }
