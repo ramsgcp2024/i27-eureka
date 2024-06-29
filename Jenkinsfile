@@ -57,7 +57,9 @@ pipeline {
                 }
             }
             steps {
-             buildApp().call()
+                script {
+                    buildApp().call()
+                }
             }
         }
         stage('Sonar') {
@@ -95,7 +97,9 @@ pipeline {
                     }
                 }
                 steps {
-                    dockerBuildandPush().call()
+                    script {
+                        dockerBuildandPush().call()
+                    }
                 }
             }
 
