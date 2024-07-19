@@ -2,20 +2,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata: 
-  name: i27-eureka-dev
+  name: i27-eureka-tst
 spec:
   replicas: 1
   selector: 
     matchLabels: 
-      name: i27-eureka-dev
+      name: i27-eureka-tst
   template:
     metadata:
       labels: 
-        name: i27-eureka-dev
+        name: i27-eureka-tst
     spec:
       containers:
         - image: DIT
-          name: i27-eureka-dev
+          name: i27-eureka-tst
       #    resources:
       #      requests:
       #        memory: "128Mi"
@@ -28,10 +28,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata: 
-  name: i27-eureka-dev-svc
+  name: i27-eureka-tst-svc
 spec:
   selector:
-    name: i27-eureka-dev
+    name: i27-eureka-tst
   type: NodePort # ClusterIP, NodePort, LoadBalancer
   ports:
   - protocol: TCP
