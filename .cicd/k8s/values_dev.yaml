@@ -3,6 +3,6 @@ fullname: i27-eureka-dev
 replicas:
   default: 1
 image: 
-  name: ramsgcp2024/i27-eureka
+  name: ramsgcp2024/eureka
   tag: random
 namespace: cart-dev-ns
