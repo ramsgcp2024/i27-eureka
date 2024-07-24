@@ -1,5 +1,4 @@
 @Library("com.i27academy.slb@main") _
-//helmPipeline
-k8sPipeline(
+helmPipeline(
     appName: 'eureka'
 )
